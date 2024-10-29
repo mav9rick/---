@@ -3,7 +3,6 @@
 # library(dplyr)
 # install.packages("Deriv")
 # library(Deriv)
-
 n = 1000
 t1 = 0.3
 t2 = 1
@@ -37,9 +36,10 @@ printFunc(AR2)
 printFunc(AR3)
 
 # 2 задание 
-# Функция суммы квадратов ошибок
+# Функция вычисления по МНК
 MNK <-function(t,AR,k,n)
 {
+  # Функция суммы квадратов ошибок
   sum_of_squares <- function(t, AR,k,n) 
   {
     r <- 0 
@@ -60,18 +60,36 @@ MNK <-function(t,AR,k,n)
     numerical_derivative(sum_of_squares, t, AR1,k,n)
   }
   root <- uniroot(find_roots, c(-10, 10))$root
-  cat("Корень производной:", root, "\n")
-  return(sum_of_squares(t, AR,k,n))
+  return(root)
 }
 MNK1 = MNK(t1,AR1,2,1000)
+cat("Корень производной:", MNK1, "\n")
 #МП 3 задание
-result <- optimize(sum_of_squares, interval = c(-10, 10), AR = AR1)
-tettaRes <- result$minimum
-print(paste("Вычисленное значение tetta:", tettaRes))
-
+MMP <- function(func,AR)
+{
+  result <- optimize(sum_of_squares, interval = c(-10, 10), AR)
+  tettaRes <- result$minimum
+  print(paste("Вычисленное значение tetta:", tettaRes))
+}
+MMP1 = MMP(MNK1,AR1)
 # 4 задание
+ntheta = 0.8
+nAR = AR(ntheta,1000)
 
+vector <- function(t,AR,kmin,kmax)
+{
+  k = kmin
+  n = kmax
+  v <- numeric(kmax-kmin)
+  for (k in kmin:kmax)
+  {
+    v[k] <- MNK(t,AR,k,n)
+  }
+  return (v)
+}
+MNK3 = vector(ntheta,nAR,10,1000)
+MMP2 = MMP(MNK3,nAR)
 
-
+printFunc(MNK3)
 
 
