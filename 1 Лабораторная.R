@@ -3,6 +3,10 @@
 # library(dplyr)
 # install.packages("Deriv")
 # library(Deriv)
+# install.packages("stats")
+# library(stats)
+# install.packages("forecast")
+# library(forecast)
 n = 1000
 t1 = 0.3
 t2 = 1
@@ -94,9 +98,20 @@ MMP2 = MMP(MNK3,nAR)
 printFunc(MNK3)
 
 # 5 задание
+AR2 <- function(theta1,theta2, n) 
+{
+  x <- numeric(n)
+  x[1:2] <- rnorm(2)
+  for (k in 3:n) 
+  {
+    x[k] <- theta1 * x[k-1] + theta2 * x[k-2] + rnorm(1)
+  }
+  return(x)
+}
+
 ntheta2 = 0.4
 ntheta3 = 0.1
-nAR2 = AR(ntheta2,1000)
+nAR2 = AR2(ntheta2,ntheta3,1000)
 
 stationarity <- function(theta1, theta2) 
   {
@@ -121,7 +136,7 @@ stationarity <- function(theta1, theta2)
     }
   return(st)
 }
-#Построение графика после проверок на стационарность
+# Построение графика после проверок на стационарность
 if (stationarity(ntheta2, ntheta3)) 
 {
 cat("Процесс стационарен\n")
@@ -131,12 +146,15 @@ printFunc(nAR2)
 cat("Процесс не стационарен \n")
 }
 
+# Задание 6 
 
+ntheta1 <- 0.6
+ntheta2 <- -0.4
+n <- 1000
+x <- AR2(ntheta2, ntheta3,n)
 
+arima_model <- arima(x, order = c(2, 0, 0), include.mean = FALSE)
 
+forecasted_values <- forecast(arima_model, h = 10)
 
-
-
-
-
-
+plot(forecasted_values)
