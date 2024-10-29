@@ -88,10 +88,55 @@ vector <- function(t,AR,kmin,kmax)
   return (v)
 }
 MNK3 = vector(ntheta,nAR,10,1000)
+cat("Корень производной:", MNK3[1], "\n")
 MMP2 = MMP(MNK3,nAR)
 
 printFunc(MNK3)
-MNK3
+
 # 5 задание
+ntheta2 = 0.4
+ntheta3 = 0.1
+nAR2 = AR(ntheta2,1000)
+
+stationarity <- function(theta1, theta2) 
+  {
+  discrim <- theta1^2 - 4 * theta2
+  # Если дискриминант отрицательный то корни будут комплексными
+  if (discrim < 0) 
+    {
+    # Для комплексных корней 
+    lambda_r <- theta1 / 2
+    lambda_im <- sqrt(abs(discrim)) / 2
+    m <- sqrt(lambda_r^2 + lambda_im^2)
+    # условие стационарности: модуль корня должен быть меньше 1
+    st <- m < 1
+    } 
+  else 
+    {
+    # корни действительные
+    lambda1 <- (theta1 + sqrt(discrim)) / 2  # 1-ый корень
+    lambda2 <- (theta1 - sqrt(discrim)) / 2  # 2-ой корень
+    #условие стационарности
+    st <- abs(lambda1) < 1 && abs(lambda2) < 1
+    }
+  return(st)
+}
+#Построение графика после проверок на стационарность
+if (stationarity(ntheta2, ntheta3)) 
+{
+cat("Процесс стационарен\n")
+printFunc(nAR2)
+} else 
+{
+cat("Процесс не стационарен \n")
+}
+
+
+
+
+
+
+
+
 
 
