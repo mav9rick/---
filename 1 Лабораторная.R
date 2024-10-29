@@ -81,9 +81,9 @@ vector <- function(t,AR,kmin,kmax)
   k = kmin
   n = kmax
   v <- numeric(kmax-kmin)
-  for (k in kmin:kmax)
+  for (i in 1:length(v))
   {
-    v[k] <- MNK(t,AR,k,n)
+    v[i] <- MNK(t,AR,k+i,n)
   }
   return (v)
 }
@@ -91,5 +91,7 @@ MNK3 = vector(ntheta,nAR,10,1000)
 MMP2 = MMP(MNK3,nAR)
 
 printFunc(MNK3)
+MNK3
+# 5 задание
 
 
