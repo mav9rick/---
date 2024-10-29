@@ -1,7 +1,7 @@
 # Установка и загрузка пакетов
-# install.packages("dplyr")  # Убедитесь, что пакет установлен
+# install.packages("dplyr")
 # library(dplyr)
-# install.packages("Deriv")   # Убедитесь, что пакет установлен
+# install.packages("Deriv")
 # library(Deriv)
 
 n = 1000
@@ -36,33 +36,42 @@ printFunc(AR1)
 printFunc(AR2)
 printFunc(AR3)
 
+# 2 задание 
 # Функция суммы квадратов ошибок
-sum_of_squares <- function(t, AR) 
+MNK <-function(t,AR,k,n)
 {
-  r <- 0 
-  for (i in 2:n)
+  sum_of_squares <- function(t, AR,k,n) 
   {
-    r <- r + (AR[i] - t * AR[i-1])^2
+    r <- 0 
+    for (i in k:n)
+    {
+      r <- r + (AR[i] - t * AR[i-1])^2
+    }
+    return(r)
   }
-  return(r)
+  # Функция для численного вычисления производной
+  numerical_derivative <- function(func, x, AR,k,n) 
+  {
+    h <- 1e-5  # Маленькое значение для приближения
+    return((func(x + h, AR,k,n) - func(x - h, AR,k,n)) / (2 * h))
+  }
+  find_roots <- function(t) 
+  {
+    numerical_derivative(sum_of_squares, t, AR1,k,n)
+  }
+  root <- uniroot(find_roots, c(-10, 10))$root
+  cat("Корень производной:", root, "\n")
+  return(sum_of_squares(t, AR,k,n))
 }
-
-# Функция для численного вычисления производной
-numerical_derivative <- function(func, x, AR) 
-{
-  h <- 1e-5  # Маленькое значение для приближения
-  return((func(x + h, AR) - func(x - h, AR)) / (2 * h))
-}
-
-find_roots <- function(t) 
-{
-  numerical_derivative(sum_of_squares, t, AR1)
-}
-
-root <- uniroot(find_roots, c(-10, 10))$root
-cat("Корень производной:", root, "\n")
-
-#МП
+MNK1 = MNK(t1,AR1,2,1000)
+#МП 3 задание
 result <- optimize(sum_of_squares, interval = c(-10, 10), AR = AR1)
 tettaRes <- result$minimum
 print(paste("Вычисленное значение tetta:", tettaRes))
+
+# 4 задание
+
+
+
+
+
