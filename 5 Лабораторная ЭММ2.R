@@ -1,0 +1,94 @@
+
+delta <- 0.0001 # Шаг дискретизации
+k_max <- 1000 # Максимальное количество шагов
+n <- k_max + 1 # Количество точек (включая начальную точку)
+
+# Генерируем случайные приращения
+epsilon <- rnorm(n, mean = 0, sd = sqrt(delta)) # Нормальные случайные величины
+B <- numeric(n) # Вектор для броуновского движения
+
+# Заполняем вектор B для броуновского движения
+for (k in 2:n) 
+{
+  B[k] <- B[k - 1] + epsilon[k] # Каждое новое значение <- предыдущее + случайное приращение
+}
+
+# Визуализация результата броуновского движения
+plot(seq(0, k_max * delta, by = delta), B, type = "l", 
+     main = "Моделирование броуновского движения", 
+     xlab = "Время (t)", 
+     ylab = "B(t)", 
+     col = "blue", 
+     lwd = 1)
+grid()
+
+# Задание 3: Построение ансамбля реализаций броуновского движения
+num_realizations <- 200 # Количество реализаций
+plot(seq(0, k_max * delta, by = delta), numeric(n), type = "n", 
+     main = "Ансамбль реализаций броуновского движения", 
+     xlab = "Время (t)", 
+     ylab = "B(t)", 
+     ylim = c(-3, 3)) # Устанавливаем видимые пределы Y
+
+for (i in 1:num_realizations) 
+{
+  epsilon <- rnorm(n, mean = 0, sd = sqrt(delta)) # Случайные приращения для каждой реализации
+  B <- numeric(n)
+  for (k in 2:n) 
+  {
+    B[k] <- B[k - 1] + epsilon[k] # Заполняем вектор
+  }
+  # Добавляем реализацию на график, с полупрозрачным синим цветом
+  lines(seq(0, k_max * delta, by = delta), B, col = adjustcolor("blue", alpha.f = 0.1))
+}
+
+# Линии по правилу трёх сигм
+three_sigma_upper <- 3 * sqrt(seq(0, k_max * delta, by = delta))
+three_sigma_lower <- -three_sigma_upper
+lines(seq(0, k_max * delta, by = delta), three_sigma_upper, col = "red", lty = 2)
+lines(seq(0, k_max * delta, by = delta), three_sigma_lower, col = "red", lty = 2)
+
+# Задание 5: Геометрическое броуновское движение
+S0 <- 1  # Начальное значение
+a <- 0.5  # Параметр дрейфа
+sigma <- 0.9 # Волатильность
+S <- numeric(n) # Вектор для значений геометрического броуновского движения
+S[1] <- S0 # Устанавливаем начальное значение
+
+# Генерация значений для геометрического броуновского движения
+for (k in 1:k_max) 
+{
+  S[k + 1] <- S0 * exp((a - sigma^2 / 2) * (k * delta) + sigma * B[k + 1])
+}
+
+# График геометрического броуновского движения
+plot(seq(0, k_max * delta, by = delta), S, type = "l", col = "blue", 
+     xlab = "Время (t)", 
+     ylab = "S_t", 
+     main = "Реализация геометрического броуновского движения",
+     ylim = c(0, 2)) # Устанавливаем видимые пределы для Y
+grid()
+
+# Задание 6: Ансамбль реализаций геометрического броуновского движения
+plot(seq(0, k_max * delta, by = delta), numeric(n), type = "n", 
+     main = "Ансамбль реализаций геометрического броуновского движения", 
+     xlab = "Время (t)", 
+     ylab = "S_t", 
+     ylim = c(0, 2)) # Устанавливаем видимые пределы для Y
+
+# Генерируем и отображаем 200 реализаций геометрического броуновского движения
+for (i in 1:num_realizations) 
+{
+  epsilon <- rnorm(n, mean = 0, sd = sqrt(delta)) # Генерация приращений для каждой реализации
+  B <- numeric(n) 
+  S <- numeric(n)
+  S[1] <- S0
+  for (k in 1:k_max) 
+  {
+    B[k + 1] <- B[k] + epsilon[k + 1]
+    S[k + 1] <- S0 * exp((a - sigma^2 / 2) * (k * delta) + sigma * B[k + 1])
+  }
+  
+  # Добавляем реализацию на график
+  lines(seq(0, k_max * delta, by = delta), S, col = adjustcolor("blue", alpha.f = 0.1))
+}
